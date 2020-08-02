@@ -53,19 +53,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _accessToken = "";
+  int _cases = 0;
+  int _casesConfirmed = 0;
+  int _casesSuspected = 0;
+  int _deaths = 0;
 
-  void _incrementCounter() async {
+  void _updateAccessToken() async {
     final apiService = APIService(API.sandbox());
     final accessToken = await apiService.getAccessToken();
+    final cases = await apiService.getEndpointData(
+        accessToken: accessToken, endPoint: EndPoint.cases);
     setState(() {
       _accessToken = accessToken;
+      _cases = cases;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
+    // by the _updateAccessToken method above.
     //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
@@ -99,15 +106,19 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               'You have pushed the button this many times:',
             ),
+            // Text(
+            //   '$_accessToken',
+            //   style: Theme.of(context).textTheme.headline4,
+            // ),
             Text(
-              '$_accessToken',
+              '$_cases',
               style: Theme.of(context).textTheme.headline4,
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _updateAccessToken,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
