@@ -19,25 +19,33 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> _updateData() async {
-    final dataRepository = Provider.of<DataRepository>(context);
-    final cases = await dataRepository.getEndpointData(EndPoint.cases);
-    setState(() {
-      _cases = cases;
-      print(_cases);
-    });
+    print('object');
+    try {
+      final dataRepository =
+          Provider.of<DataRepository>(context, listen: false);
+      final cases = await dataRepository.getEndpointData(EndPoint.cases);
+      setState(() {
+        _cases = cases;
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text('Covid19 Tracker')),
-        body: ListView(
-          children: <Widget>[
-            EndpointCard(
-              endPoint: EndPoint.cases,
-              value: _cases,
-            )
-          ],
+        body: RefreshIndicator(
+          onRefresh: _updateData,
+          child: ListView(
+            children: <Widget>[
+              EndpointCard(
+                endPoint: EndPoint.cases,
+                value: _cases,
+              )
+            ],
+          ),
         ));
   }
 }
