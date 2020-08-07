@@ -1,37 +1,75 @@
 import 'package:covid19_zim/app/services/api.dart';
 import 'package:flutter/material.dart';
 
+class EndpointCardData {
+  EndpointCardData(this.title, this.assetName, this.color);
+  final String title;
+  final String assetName;
+  final Color color;
+}
+
 class EndpointCard extends StatelessWidget {
   @override
   const EndpointCard({Key key, this.endPoint, this.value}) : super(key: key);
   final EndPoint endPoint;
   final int value;
 
-  static Map<EndPoint, String> _cardTitles = {
-    EndPoint.cases: 'cases',
-    EndPoint.casesConfirmed: 'Confirmed Cases',
-    EndPoint.casesSuspected: 'Suspected Cases',
-    EndPoint.deaths: 'Deaths',
-    EndPoint.recovered: 'Recovered'
+  static Map<EndPoint, EndpointCardData> _cardsData = {
+    EndPoint.cases:
+        EndpointCardData('Cases', 'assets/count.png', Color(0xFFFFF492)),
+    EndPoint.casesSuspected: EndpointCardData(
+        'Suspected cases', 'assets/suspect.png', Color(0xFFEEDA28)),
+    EndPoint.casesConfirmed: EndpointCardData(
+        'Confirmed cases', 'assets/fever.png', Color(0xFFE99600)),
+    EndPoint.deaths:
+        EndpointCardData('Deaths', 'assets/death.png', Color(0xFFE40000)),
+    EndPoint.recovered:
+        EndpointCardData('Recovered', 'assets/patient.png', Color(0xFF70A901)),
   };
+  
+  String get formattedValue {
+    if (value == null) {
+      return '';
+    }
+    return value.toString();
+  }
 
   Widget build(BuildContext context) {
+    final cardData = _cardsData[endPoint];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Card(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            
             children: <Widget>[
               Text(
-                _cardTitles[endPoint],
-                style: Theme.of(context).textTheme.headline5,
+                cardData.title,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5
+                    .copyWith(color: cardData.color),
               ),
-              Text(
-                value != null ? value.toString() : '',
-                style: Theme.of(context).textTheme.headline4,
-              )
+
+              SizedBox(height: 4),
+              SizedBox(
+                height: 52,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(cardData.assetName, color: cardData.color),
+                    Text(
+                      formattedValue,
+                      style: Theme.of(context).textTheme.headline4.copyWith(
+                          color: cardData.color, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
